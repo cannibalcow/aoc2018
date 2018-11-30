@@ -1,4 +1,5 @@
-import com.sorkmos.aoc2018.day0.Day0
+package com.sorkmos.aoc2018.day0
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
