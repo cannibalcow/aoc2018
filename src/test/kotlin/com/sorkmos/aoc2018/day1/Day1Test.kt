@@ -8,9 +8,13 @@ internal class Day1Test {
 
     @Test
     fun part1() {
+        var d1 = Day1()
+        print(d1.part1())
     }
 
     @Test
     fun part2() {
+        var d2 = Day1()
+        print(d2.part2())
     }
 }
