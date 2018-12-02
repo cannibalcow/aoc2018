@@ -18,7 +18,7 @@ internal class Day2Test {
 
     @Test
     fun day2p1() {
-        var rows = Files.readAllLines(File("src/test/resources/Day2P1.txt").toPath())
+        val rows = Files.readAllLines(File("src/test/resources/Day2P1.txt").toPath())
         print(d2.part1(rows))
     }
 
@@ -29,10 +29,22 @@ internal class Day2Test {
     }
 
     @Test
-    fun  day2p1test1() {
+    fun day2p1test1() {
         assertEquals(d2.part1(listOf("abcdef", "bbbaa", "aabcd")), 2)
     }
 
+
+    @Test
+    fun day2p2test() {
+        val rows = Files.readAllLines(File("src/test/resources/Day2P2.txt").toPath())
+        d2.part2(rows)
+    }
+
+    @Test
+    fun Day2p2exampleTest() {
+        val input = arrayListOf("abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz")
+        d2.part2(input)
+    }
 
 
 }
