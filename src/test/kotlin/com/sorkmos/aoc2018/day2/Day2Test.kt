@@ -1,6 +1,7 @@
 package com.sorkmos.aoc2018.day2
 
 import com.sorkmos.aoc2018.day1.Day1
+import com.sorkmos.aoc2018.utils.Utils
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,9 +19,10 @@ internal class Day2Test {
 
     @Test
     fun day2p1() {
-        val rows = Files.readAllLines(File("src/test/resources/Day2P1.txt").toPath())
+        val rows = Utils.fileToStringList("src/test/resources/Day2P1.txt")
         print(d2.part1(rows))
     }
+
 
 
     @Test
@@ -36,7 +38,7 @@ internal class Day2Test {
 
     @Test
     fun day2p2test() {
-        val rows = Files.readAllLines(File("src/test/resources/Day2P2.txt").toPath())
+        val rows = Utils.fileToStringList("src/test/resources/Day2P2.txt")
         d2.part2(rows)
     }
 
@@ -45,6 +47,4 @@ internal class Day2Test {
         val input = arrayListOf("abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz")
         d2.part2(input)
     }
-
-
 }
