@@ -1,74 +1,66 @@
 package com.sorkmos.aoc2018.day3
 
-import javax.swing.Spring.height
-
-
 class Day3 {
 
-
     fun part1(input: List<String>): Int {
-        var parsed = input.map { row -> parseRow(row) }.toList()
-        println(parsed)
-        var overlapArea = 0
-        parsed.forEach { r1 ->
-            println("${r1!!.id}")
-            println(r1.pos)
-            parsed.forEach { r2 ->
-                if (r1.id !== r2!!.id) {
-                    if (rectIntersects(r1!!, r2!!)) {
-                        println("\t overlaps with ${r2.id}")
-                        overlapArea += overlapArea(r1, r2)
-                    }
+        val rectangles = extractClaims(input)
+        val gridSize = 1000
+
+        val grid = IntArray(gridSize * gridSize) { 0 }
+        for (rectangle in rectangles) {
+            for (y in rectangle.y1..rectangle.y2) {
+                for (x in rectangle.x1..rectangle.x2) {
+                    grid[x + y * gridSize] += 1
                 }
             }
         }
-        return overlapArea
+
+        return grid.count { it > 1 }
     }
 
-    fun overlapArea(r1: InputItem, r2: InputItem): Int {
-        val newX = Math.max(r1.posX, r2.posX)
-        val newY = Math.max(r1.posY, r2.posY)
-        println("x: $newX y: $newY");
-        val newWidth = Math.min(r1.posX + r1.sizeX, r2.posX + r2.sizeX) - newX
-        val newHeight = Math.min(r1.posY + r1.sizeY, r2.posY + r2.sizeY) - newY
-        if (newWidth <= 0.0 || newHeight <= 0.0)
-            return 0
-
-        println("w: $newWidth h: $newHeight")
-        val inp = InputItem(666, newX, newY, newWidth, newHeight)
-        println("ninp: $inp")
-        println("npos: ${inp.pos} area: ${inp.area}")
-        return newWidth * newHeight
+    private fun extractClaims(input: List<String>): List<Rectangle> {
+        val regex = Regex("""#(?<id>\d+) @ (?<x>\d+),(?<y>\d+): (?<w>\d+)x(?<h>\d+)""")
+        return input
+            .asSequence()
+            .map { regex.find(it)!! }
+            .map {
+                val x = it.groupValues[2].toInt()
+                val y = it.groupValues[3].toInt()
+                Rectangle(
+                    it.groupValues[1].toInt(),
+                    x,
+                    y,
+                    x - 1 + it.groupValues[4].toInt(),
+                    y - 1 + it.groupValues[5].toInt()
+                )
+            }
+            .toList()
     }
 
-    fun parseRow(str: String): InputItem? {
-        val r = "\\#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)".toRegex()
-        var result = r.matchEntire(str)
-        return InputItem(result!!.groupValues[1].toInt(), result.groupValues[2].toInt(), result.groupValues[3].toInt(), result.groupValues[4].toInt(), result.groupValues[5].toInt())
-    }
 
-    fun rectIntersects(r1: InputItem, r2: InputItem): Boolean {
-        if (r1.id == r2.id) return false
-        if (r1.topRightY <= r2.bottomLeftY || r1.bottomLeftY >= r2.topRightY)
-            return false;
+    fun part2(input: List<String>): Int {
+        val rectangles = extractClaims(input)
+        val overlaps = IntArray(rectangles.size) { rectangles[it].id }
 
-        if (r1.topRightX <= r2.bottomLeftX || r1.bottomLeftX >= r2.topRightX)
-            return false
+        val gridSize = 1000
 
-        return true
+        val grid = IntArray(gridSize * gridSize) { 0 }
+        for (re in rectangles) {
+            for (y in re.y1..re.y2) {
+                for (x in re.x1..re.x2) {
+                    val idx = x + y * gridSize
+                    if (grid[idx] != 0) {
+                        overlaps[grid[idx] - 1] = 0
+                        overlaps[re.id - 1] = 0
+                    }
+                    grid[idx] = re.id
+                }
+            }
+        }
+
+        return overlaps.find { it != 0 }!!
     }
 }
 
-data class InputItem(val id: Int, val posX: Int, val posY: Int, val sizeX: Int, val sizeY: Int) {
-    val topRightX: Int get() = this.posX + this.sizeX
-    val topRightY: Int get() = this.posY
-    val topLeftX: Int get() = this.posX
-    val topLeftY: Int get() = this.posY
-    val bottomRightX: Int get() = this.posX + this.sizeX
-    val bottomRightY: Int get() = this.posY - this.sizeY
-    val bottomLeftY: Int get() = this.posY - this.sizeY
-    val bottomLeftX: Int get() = this.posX
+private data class Rectangle(val id: Int, val x1: Int, val y1: Int, val x2: Int, val y2: Int)
 
-    val pos = "($topLeftX, $topLeftY), ($topRightX, $topRightY), ($bottomLeftX, $bottomLeftY), ($bottomRightX, $bottomRightY)"
-    val area = sizeX * sizeY
-}
